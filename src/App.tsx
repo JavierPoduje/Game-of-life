@@ -2,39 +2,15 @@ import React, { useState, useCallback, useRef } from 'react';
 
 import produce from 'immer';
 
-import { ROWS, COLS, OPERATIONS } from './constants';
+import { COLS } from './constants';
+import { Grid } from './types';
+import {
+  generateEmptyGrid,
+  generateRandomGrid,
+  simulateNextGrid
+} from './grid';
+
 import './App.css';
-
-const operations = [
-  [0, 1],
-  [0, -1],
-  [1, -1],
-  [-1, 1],
-  [1, 1],
-  [-1, -1],
-  [1, 0],
-  [-1, 0]
-];
-
-const generateEmptyGrid = () => {
-  const rows = [];
-
-  for (let i = 0; i < ROWS; i++) {
-    rows.push(Array.from(Array(COLS), () => 0));
-  }
-
-  return rows;
-};
-
-const generateRandomGrid = () => {
-  const rows = [];
-
-  for (let i = 0; i < ROWS; i++) {
-    rows.push(Array.from(Array(COLS), () => (Math.random() > 0.7 ? 1 : 0)));
-  }
-
-  return rows;
-};
 
 function App() {
   const [grid, setGrid] = useState(generateEmptyGrid);
@@ -47,31 +23,13 @@ function App() {
   const runSimulation = useCallback(() => {
     if (!runningRef.current) return;
 
-    setGrid(g => {
-      return produce(g, gridCopy => {
-        for (let i = 0; i < ROWS; i++) {
-          for (let j = 0; j < COLS; j++) {
-            let neighbors = 0;
-
-            operations.forEach(([x, y]) => {
-              const newI = i + x;
-              const newJ = j + y;
-
-              if (newI >= 0 && newI < ROWS && newJ >= 0 && newJ < COLS) {
-                neighbors += g[newI][newJ];
-              }
-            });
-
-            if (neighbors < 2 || neighbors > 3) {
-              gridCopy[i][j] = 0;
-            } else if (g[i][j] === 0 && neighbors === 3) {
-              gridCopy[i][j] = 1;
-            }
-          }
-        }
-      });
-    });
-
+    const getNextGridSimulation = (gridCopy: Grid) => (g: Grid): Grid => {
+      return simulateNextGrid(gridCopy)(g);
+    };
+    const nextGrid = (g: Grid): Grid => {
+      return produce(g, gridCopy => getNextGridSimulation(gridCopy)(g));
+    };
+    setGrid(g => nextGrid(g));
     setTimeout(runSimulation, 100);
   }, []);
 
@@ -89,20 +47,8 @@ function App() {
         >
           {running ? 'stop' : 'start'}
         </button>
-        <button
-          onClick={() => {
-            setGrid(generateRandomGrid());
-          }}
-        >
-          random
-        </button>
-        <button
-          onClick={() => {
-            setGrid(generateEmptyGrid());
-          }}
-        >
-          clear
-        </button>
+        <button onClick={() => setGrid(generateRandomGrid())}>random</button>
+        <button onClick={() => setGrid(generateEmptyGrid())}>clear</button>
       </div>
       <div
         style={{
@@ -114,18 +60,14 @@ function App() {
           grid.map((rows, i) =>
             rows.map((_cols, k) => (
               <div
+                className="cell"
+                style={{ backgroundColor: grid[i][k] ? 'pink' : undefined }}
                 key={`${i}-${k}`}
                 onClick={() => {
                   const newGrid = produce(grid, gridCopy => {
                     gridCopy[i][k] = gridCopy[i][k] ? 0 : 1;
                   });
                   setGrid(newGrid);
-                }}
-                style={{
-                  width: 20,
-                  height: 20,
-                  backgroundColor: grid[i][k] ? 'pink' : undefined,
-                  border: 'solid 1px black'
                 }}
               ></div>
             ))
