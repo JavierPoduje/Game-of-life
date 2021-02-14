@@ -2,7 +2,7 @@
 
 Simple visualization of Conway's game "Game of Life" made with React and Typescript.
 
-
+![image](./src/screenshot.png)
 
 ## Install on your local machine
 
