@@ -1,5 +1,25 @@
+/*black = #051923*/
+
 .cell {
   width: 20px;
   height: 20px;
   border: solid 1px black;
+}
+
+.button {
+  display: inline-block;
+  padding: 0.35em 1.2em;
+  border: 0.1em solid #003554;
+  margin: 0 0.3em 0.3em 0;
+  border-radius: 0.12em;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-weight: 500;
+  color: #051923;
+  text-align: center;
+  transition: all 0.2s;
+}
+.button:hover {
+  color: #fff;
+  background-color: #050505;
 }

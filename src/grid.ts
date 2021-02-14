@@ -1,3 +1,5 @@
+import { reduce } from 'ramda';
+
 import {
   ROWS,
   COLS,
@@ -13,16 +15,27 @@ export const generateEmptyGrid = (): Grid => {
 };
 
 export const generateRandomGrid = (): Grid => {
-  const cols: GridValue[] = Array.from(new Array(COLS), () => {
-    return Math.random() > RANDOM_PORCENTAGE_INITIALLY_ALIVE ? 1 : 0;
-  });
-  const rows: GridValue[][] = Array.from(new Array(ROWS), () => cols);
-  return rows;
+  const generateCellValue = (): GridValue =>
+    Math.random() > RANDOM_PORCENTAGE_INITIALLY_ALIVE ? 1 : 0;
+  const generateColumns = (): GridValue[] =>
+    Array.from(new Array(COLS), generateCellValue);
+
+  return Array.from(new Array(ROWS), generateColumns);
 };
 
 export const simulateNextGrid = (gridCopy: Grid) => (
   initialGrid: Grid
 ): Grid => {
+  const killOrStayDead = (neighbors: number): boolean =>
+    neighbors < 2 || neighbors > 3;
+
+  const reviveOrStayAlive = (
+    grid: Grid,
+    i: number,
+    j: number,
+    neighbors: number
+  ) => grid[i][j] === 0 && neighbors === 3;
+
   for (let i = 0; i < ROWS; i++) {
     for (let j = 0; j < COLS; j++) {
       const neighbors = getNeighbors(initialGrid, i, j);
@@ -39,27 +52,15 @@ export const simulateNextGrid = (gridCopy: Grid) => (
 };
 
 const getNeighbors = (grid: Grid, i: number, j: number): number => {
-  let neighbors = 0;
+  const cellDoesntOverflowGrid = (newI: number, newJ: number): boolean =>
+    newI >= 0 && newI < ROWS && newJ >= 0 && newJ < COLS;
 
-  OPERATIONS.forEach(([x, y]) => {
+  const reducer = (acc: number, [x, y]: number[]): number => {
     const newI = i + x;
     const newJ = j + y;
 
-    if (cellDoesntOverflowGrid(newI, newJ)) neighbors += grid[newI][newJ];
-  });
+    return cellDoesntOverflowGrid(newI, newJ) ? acc + grid[newI][newJ] : acc;
+  };
 
-  return neighbors;
+  return reduce(reducer, 0, OPERATIONS);
 };
-
-const killOrStayDead = (neighbors: number): boolean =>
-  neighbors < 2 || neighbors > 3;
-
-const reviveOrStayAlive = (
-  grid: Grid,
-  i: number,
-  j: number,
-  neighbors: number
-) => grid[i][j] === 0 && neighbors === 3;
-
-const cellDoesntOverflowGrid = (newI: number, newJ: number): boolean =>
-  newI >= 0 && newI < ROWS && newJ >= 0 && newJ < COLS;

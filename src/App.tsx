@@ -33,22 +33,45 @@ function App() {
     setTimeout(runSimulation, 100);
   }, []);
 
+  const simulate = () => {
+    setRunning(!running);
+    if (!running) {
+      runningRef.current = true;
+      runSimulation();
+    }
+  };
+
+  const buildCell = (i: number, k: number) => {
+    return (
+      <div
+        className="cell"
+        style={{ backgroundColor: grid[i][k] ? 'pink' : undefined }}
+        key={`${i}-${k}`}
+        onClick={() => {
+          const newGrid = produce(grid, gridCopy => {
+            gridCopy[i][k] = gridCopy[i][k] ? 0 : 1;
+          });
+          setGrid(newGrid);
+        }}
+      ></div>
+    );
+  };
+
   return (
     <>
       <div style={{ display: 'flex' }}>
-        <button
-          onClick={() => {
-            setRunning(!running);
-            if (!running) {
-              runningRef.current = true;
-              runSimulation();
-            }
-          }}
-        >
+        <button className="button" onClick={simulate}>
           {running ? 'stop' : 'start'}
         </button>
-        <button onClick={() => setGrid(generateRandomGrid())}>random</button>
-        <button onClick={() => setGrid(generateEmptyGrid())}>clear</button>
+        <button
+          className="button"
+          onClick={() => setGrid(generateRandomGrid())}
+        >
+          random
+        </button>
+        <button className="button" onClick={() => setGrid(generateEmptyGrid())}>
+          clear
+        </button>
       </div>
       <div
         style={{
@@ -56,22 +79,7 @@ function App() {
           gridTemplateColumns: `repeat(${COLS}, 20px)`
         }}
       >
-        {grid &&
-          grid.map((rows, i) =>
-            rows.map((_cols, k) => (
-              <div
-                className="cell"
-                style={{ backgroundColor: grid[i][k] ? 'pink' : undefined }}
-                key={`${i}-${k}`}
-                onClick={() => {
-                  const newGrid = produce(grid, gridCopy => {
-                    gridCopy[i][k] = gridCopy[i][k] ? 0 : 1;
-                  });
-                  setGrid(newGrid);
-                }}
-              ></div>
-            ))
-          )}
+        {grid && grid.map((rows, i) => rows.map((_cols, k) => buildCell(i, k)))}
       </div>
     </>
   );
