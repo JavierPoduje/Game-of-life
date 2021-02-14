@@ -1,7 +1,7 @@
-export const ROWS = 50;
-export const COLS = 50;
-export const RANDOM_PORCENTAGE_INITIALLY_ALIVE = 0.7;
-export const OPERATIONS = [
+export const ROWS = 30;
+export const COLS = 60;
+export const RANDOM_PORCENTAGE_INITIALLY_ALIVE = 0.8;
+export const NEIGHBORS_INDEXES = [
   [0, 1],
   [0, -1],
   [1, -1],

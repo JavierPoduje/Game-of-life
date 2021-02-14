@@ -1,25 +1,45 @@
-/*black = #051923*/
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  align-content: center;
+}
 
 .cell {
   width: 20px;
   height: 20px;
-  border: solid 1px black;
+  border: solid 1px #c0c0c0;
+  transition: background-color 0.4s;
+}
+.alive {
+  background-color: #006494;
 }
 
+.buttons-container {
+  display: flex;
+  margin: 20px;
+  padding: 10px;
+  width: 100%;
+  justify-content: center;
+}
 .button {
+  outline: 0;
+  margin-left: 10px;
+  margin-right: 10px;
   display: inline-block;
   padding: 0.35em 1.2em;
-  border: 0.1em solid #003554;
-  margin: 0 0.3em 0.3em 0;
-  border-radius: 0.12em;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
   box-sizing: border-box;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 800;
   color: #051923;
   text-align: center;
   transition: all 0.2s;
 }
 .button:hover {
   color: #fff;
-  background-color: #050505;
+  background-color: #003554;
 }

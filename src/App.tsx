@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 import produce from 'immer';
 
@@ -41,36 +41,47 @@ function App() {
     }
   };
 
+  const handleCellClick = (i: number, k: number): void => {
+    const newGrid = produce(grid, gridCopy => {
+      gridCopy[i][k] = gridCopy[i][k] ? 0 : 1;
+    });
+
+    setGrid(newGrid);
+  };
+
   const buildCell = (i: number, k: number) => {
     return (
       <div
-        className="cell"
-        style={{ backgroundColor: grid[i][k] ? 'pink' : undefined }}
+        className={`cell ${grid[i][k] ? 'alive' : ''}`}
         key={`${i}-${k}`}
-        onClick={() => {
-          const newGrid = produce(grid, gridCopy => {
-            gridCopy[i][k] = gridCopy[i][k] ? 0 : 1;
-          });
-          setGrid(newGrid);
-        }}
+        onClick={() => handleCellClick(i, k)}
       ></div>
     );
   };
 
   return (
-    <>
-      <div style={{ display: 'flex' }}>
+    <div className="app-container">
+      <div className="buttons-container">
         <button className="button" onClick={simulate}>
-          {running ? 'stop' : 'start'}
+          {running ? 'Stop' : 'Start'}
         </button>
         <button
           className="button"
-          onClick={() => setGrid(generateRandomGrid())}
+          onClick={() => {
+            if (running) setRunning(!running);
+            setGrid(generateRandomGrid());
+          }}
         >
-          random
+          Random
         </button>
-        <button className="button" onClick={() => setGrid(generateEmptyGrid())}>
-          clear
+        <button
+          className="button"
+          onClick={() => {
+            if (running) setRunning(!running);
+            setGrid(generateEmptyGrid());
+          }}
+        >
+          Clear
         </button>
       </div>
       <div
@@ -81,7 +92,7 @@ function App() {
       >
         {grid && grid.map((rows, i) => rows.map((_cols, k) => buildCell(i, k)))}
       </div>
-    </>
+    </div>
   );
 }
 

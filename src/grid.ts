@@ -1,10 +1,8 @@
-import { reduce } from 'ramda';
-
 import {
   ROWS,
   COLS,
   RANDOM_PORCENTAGE_INITIALLY_ALIVE,
-  OPERATIONS
+  NEIGHBORS_INDEXES
 } from './constants';
 import { Grid, GridValue } from './types';
 
@@ -62,5 +60,5 @@ const getNeighbors = (grid: Grid, i: number, j: number): number => {
     return cellDoesntOverflowGrid(newI, newJ) ? acc + grid[newI][newJ] : acc;
   };
 
-  return reduce(reducer, 0, OPERATIONS);
+  return NEIGHBORS_INDEXES.reduce(reducer, 0);
 };
