@@ -8,7 +8,7 @@ Simple visualization of Conway's game "Game of Life" made with React and Typescr
 
 1. Clone the code on your local machine. Probably:
 ```sh
-git@github.com:JavierPoduje/Game-of-life.git
+git clone git@github.com:JavierPoduje/Game-of-life.git
 ```
 
 2. Install node packages:
