@@ -6,7 +6,7 @@ Simple visualization of Conway's game "Game of Life" made with React and Typescr
 
 ## Install on your local machine
 
-1. Clone the code on your local machine. Probably:
+1. Clone the code on your local machine:
 ```sh
 git clone git@github.com:JavierPoduje/Game-of-life.git
 ```
